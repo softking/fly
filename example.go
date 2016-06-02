@@ -1,7 +1,8 @@
-package main
+package fly
 
 import (
 	"time"
+	"testing"
 	"github.com/softking/fly"
 )
 
@@ -39,7 +40,7 @@ func mid2(c *fly.Context) bool {
 	return true
 }
 
-func main() {
+func Test_Fly(t *testing.T) {
 	f := fly.IWillFly()
 	f.Midware(mid1, mid2)
 	f.Get("/hello", pre, hello, after)
@@ -47,3 +48,4 @@ func main() {
 	f.RunReload()
 
 }
+
