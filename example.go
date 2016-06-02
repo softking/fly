@@ -2,7 +2,7 @@ package main
 
 import (
 	"time"
-	"wpweb/fly"
+	"fly"
 )
 
 func pre(c *fly.Context) bool {
