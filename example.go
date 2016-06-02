@@ -2,7 +2,7 @@ package main
 
 import (
 	"time"
-	"fly"
+	"github.com/softking/fly"
 )
 
 func pre(c *fly.Context) bool {

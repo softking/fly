@@ -3,7 +3,7 @@ package fly
 import (
 	"fmt"
 	"net/http"
-	"fly/reload"
+	"github.com/softking/fly/reload"
 )
 
 // IWillFly 我要飞得更高,非得更更更更, 咳咳,卡带了
