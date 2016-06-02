@@ -1,4 +1,4 @@
-package test
+package main
 
 import (
 	"time"
@@ -40,7 +40,7 @@ func mid2(c *fly.Context) bool {
 	return true
 }
 
-func Test_Fly(t *testing.T) {
+func main() {
 	f := fly.IWillFly()
 	f.Midware(mid1, mid2)
 	f.Get("/hello", pre, hello, after)
