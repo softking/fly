@@ -1,5 +1,20 @@
 package fly
 
+import "net/http"
+
+// Handler Handler
+type Handler func(*Context) bool
+
+// Context Context
+type Context struct {
+	index    int
+	Writer   http.ResponseWriter
+	Request  *http.Request
+	Param  map[string]string
+	Data     map[string]interface{}
+	handlers []Handler
+}
+
 // WriteString 输出字符串
 func (c *Context) WriteString(context string) {
 	c.Writer.Write([]byte(context))

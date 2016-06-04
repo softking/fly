@@ -1,51 +1,47 @@
 package main
 
 import (
-	"time"
-	"testing"
 	"github.com/softking/fly"
 )
 
-func pre(c *fly.Context) bool {
-	c.WriteString("pre\n")
+// HelloPre pre
+func HelloPre(c *fly.Context) bool {
+	c.WriteString("pre")
+	c.WriteString(c.Param["name"] + "\n")
 	return true
 }
 
-func after(c *fly.Context) bool {
-	c.WriteString("after\n")
+// Hello hello
+func Hello(c *fly.Context) bool {
+
+	c.WriteString("hello")
+	c.WriteString(c.Param["name"] + "\n")
 	return true
 }
 
-func hello(c *fly.Context) bool {
-	time.Sleep(20 * time.Second)
-	data, ok := c.GetParam("msg")
-	if ok {
-		c.WriteString(data + "\n")
-	} else {
-		c.WriteString("error\n")
-	}
+// HelloAfter after
+func HelloAfter(c *fly.Context) bool {
+	c.WriteString("after")
+	c.WriteString(c.Param["name"] + "\n")
 	return true
 }
 
-func mid1(c *fly.Context) bool {
-	c.WriteString("111\n")
+// Mid midware
+func Mid(c *fly.Context) bool {
+	c.WriteString("midpre\n")
 	c.Next()
-	c.WriteString("222\n")
-	return true
-}
+	c.WriteString("midafter\n")
 
-func mid2(c *fly.Context) bool {
-	c.WriteString("333\n")
-	c.WriteString("444\n")
 	return true
 }
 
 func main() {
-	f := fly.IWillFly()
-	f.Midware(mid1, mid2)
-	f.Get("/hello", pre, hello, after)
-	f.POST("/hello", pre, hello, after)
-	f.RunReload()
+	router := fly.IWillFly()
+
+	router.MidWare(Mid)
+
+	router.GET("/hello/:name", HelloPre, Hello, HelloAfter)
+
+	fly.ReloadRun(router, ":2222")
 
 }
-
