@@ -2,42 +2,41 @@ package main
 
 import (
 	"github.com/softking/fly"
+	"github.com/softking/fly/midware"
 )
 
 // HelloPre pre
 func HelloPre(c *fly.Context) {
-	c.WriteString("pre \n")
+	c.WriteString(200, "pre \n")
 
 }
 
 // Hello hello
-func Hello(c *fly.Context)  {
-
-	c.WriteString("hello")
-	c.WriteString(c.Param["name"] + "\n")
-	c.Abort()
+func Hello(c *fly.Context) {
+	c.WriteString(200, "hello")
+	c.WriteString(200, c.Param["name"]+"\n")
 }
 
 // HelloAfter after
-func HelloAfter(c *fly.Context)  {
-	c.WriteString("after \n")
+func HelloAfter(c *fly.Context) {
+	c.WriteString(200, "after \n")
 }
 
 // Mid midware
-func Mid(c *fly.Context)  {
-	c.WriteString("midpre\n")
+func Mid(c *fly.Context) {
+	c.WriteString(200, "midpre\n")
 	c.Next()
-	c.WriteString("midafter\n")
-
+	c.WriteString(200, "midafter\n")
 }
 
 func main() {
 	router := fly.IWillFly()
 
-	router.MidWare(Mid)
+	router.MidWare(midware.Logger, midware.Recovery)
+	router.AddMidware(Mid)
 
 	router.GET("/hello/:name", HelloPre, Hello, HelloAfter)
 
-	fly.ReloadRun(router, ":2222")
+	fly.ReloadRun(router, ":8888")
 
 }
