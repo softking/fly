@@ -5,34 +5,30 @@ import (
 )
 
 // HelloPre pre
-func HelloPre(c *fly.Context) bool {
-	c.WriteString("pre")
-	c.WriteString(c.Param["name"] + "\n")
-	return true
+func HelloPre(c *fly.Context) {
+	c.WriteString("pre \n")
+
 }
 
 // Hello hello
-func Hello(c *fly.Context) bool {
+func Hello(c *fly.Context)  {
 
 	c.WriteString("hello")
 	c.WriteString(c.Param["name"] + "\n")
-	return true
+	c.Abort()
 }
 
 // HelloAfter after
-func HelloAfter(c *fly.Context) bool {
-	c.WriteString("after")
-	c.WriteString(c.Param["name"] + "\n")
-	return true
+func HelloAfter(c *fly.Context)  {
+	c.WriteString("after \n")
 }
 
 // Mid midware
-func Mid(c *fly.Context) bool {
+func Mid(c *fly.Context)  {
 	c.WriteString("midpre\n")
 	c.Next()
 	c.WriteString("midafter\n")
 
-	return true
 }
 
 func main() {

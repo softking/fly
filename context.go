@@ -3,7 +3,7 @@ package fly
 import "net/http"
 
 // Handler Handler
-type Handler func(*Context) bool
+type Handler func(*Context)
 
 // Context Context
 type Context struct {
@@ -32,10 +32,7 @@ func (c *Context) GetParam(key string) (string, bool) {
 func (c *Context) dispatch() {
 	s := len(c.handlers)
 	for ; c.index < s; c.index++ {
-		if !c.handlers[c.index](c) {
-			c.index = s
-			return
-		}
+		c.handlers[c.index](c)
 	}
 }
 
@@ -44,9 +41,10 @@ func (c *Context) Next() {
 	c.index++
 	s := len(c.handlers)
 	for ; c.index < s; c.index++ {
-		if !c.handlers[c.index](c) {
-			c.index = s
-			return
-		}
+		c.handlers[c.index](c)
 	}
+}
+
+func (c *Context)Abort(){
+	c.index = len(c.handlers)
 }
