@@ -13,8 +13,10 @@ func HelloPre(c *fly.Context) {
 
 // Hello hello
 func Hello(c *fly.Context) {
-	c.WriteString(200, "hello")
-	c.WriteString(200, c.Param["name"]+"\n")
+	a, _ := c.Query("cao")
+	c.WriteString(200, "hello   ")
+	c.WriteString(200, a + "   ")
+	c.WriteString(200, c.Param("name")+"\n")
 }
 
 // HelloAfter after

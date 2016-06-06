@@ -11,7 +11,7 @@ type flyConn struct {
 }
 
 // Close 关闭
-func (c flyConn) Close() (err error) {
+func (c *flyConn) Close() (err error) {
 	defer func() {
 		if r := recover(); r != nil {
 			switch x := r.(type) {

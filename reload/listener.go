@@ -38,7 +38,7 @@ func (gl *flyListener) Accept() (c net.Conn, err error) {
 	tc.SetKeepAlive(true)
 	tc.SetKeepAlivePeriod(3 * time.Minute)
 
-	c = flyConn{
+	c = &flyConn{
 		Conn:   tc,
 		server: gl.server,
 	}

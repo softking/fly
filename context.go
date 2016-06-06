@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"strings"
 	"net"
+	"net/url"
 )
 
 // Handler Handler
@@ -16,9 +17,67 @@ type Context struct {
 	index    int
 	Writer   http.ResponseWriter
 	Request  *http.Request
-	Param  map[string]string
+	Params  map[string]string
 	Data     map[string]interface{}
 	handlers []Handler
+}
+
+// SetCookie SetCookie
+func (c *Context) SetCookie(
+name string,
+value string,
+maxAge int,
+path string,
+domain string,
+secure bool,
+httpOnly bool,
+) {
+	if path == "" {
+		path = "/"
+	}
+	http.SetCookie(c.Writer, &http.Cookie{
+		Name:     name,
+		Value:    url.QueryEscape(value),
+		MaxAge:   maxAge,
+		Path:     path,
+		Domain:   domain,
+		Secure:   secure,
+		HttpOnly: httpOnly,
+	})
+}
+
+// Redirect Redirect
+func (c *Context)Redirect(code int,location string){
+	http.Redirect(c.Writer, c.Request, location, code)
+}
+
+// Header is a intelligent shortcut for c.Writer.Header().Set(key, value)
+func (c *Context) Header(key, value string) {
+	if len(value) == 0 {
+		c.Writer.Header().Del(key)
+	} else {
+		c.Writer.Header().Set(key, value)
+	}
+}
+
+func (c *Context) Cookie(name string) (string, error) {
+	cookie, err := c.Request.Cookie(name)
+	if err != nil {
+		return "", err
+	}
+	val, _ := url.QueryUnescape(cookie.Value)
+	return val, nil
+}
+
+// Put Put
+func (c *Context)Put(key string, value interface{}){
+	c.Data[key] = value
+}
+
+// Get Get
+func  (c *Context)Get(key string)(interface{}, bool){
+	data, has := c.Data[key]
+	return data,has
 }
 
 // WriteString 输出字符串
@@ -27,10 +86,20 @@ func (c *Context) WriteString(code int, context string) {
 		c.state = code
 		c.Writer.WriteHeader(code)
 		c.setState = true
-		return
 	}
 
 	c.Writer.Write([]byte(context))
+}
+
+// Write 输出
+func (c *Context) Write(code int, context []byte) {
+	if !c.setState{
+		c.state = code
+		c.Writer.WriteHeader(code)
+		c.setState = true
+	}
+
+	c.Writer.Write(context)
 }
 
 // State 获取State
@@ -38,13 +107,17 @@ func (c *Context)State()int{
 	return c.state
 }
 
-// GetParam 获取参数
-func (c *Context) GetParam(key string) (string, bool) {
+func (c *Context)Param(key string)(string){
+	return c.Params[key]
+}
+
+// Query 获取参数
+func (c *Context) Query(key string) string {
 	data, ok := c.Request.Form[key]
 	if !ok || len(data) < 1 {
-		return "", false
+		return ""
 	}
-	return data[0], true
+	return data[0]
 }
 
 // ClientIP 获取客户端ip

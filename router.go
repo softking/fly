@@ -240,9 +240,9 @@ func (r *Router) handleHTTPRequest(writer http.ResponseWriter, request *http.Req
 	c := &Context{}
 	c.Request = request
 	c.Writer = writer
-	c.Param = make(map[string]string)
+	c.Params = make(map[string]string)
 	for _,p:=range params{
-		c.Param[p.Key] = p.Value
+		c.Params[p.Key] = p.Value
 	}
 
 	c.Request.ParseForm()

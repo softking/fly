@@ -218,6 +218,7 @@ func (srv *Server) serverTimeout(d time.Duration) {
 		if srv.state == StateTerminate {
 			break
 		}
+		fmt.Println("----time--out----")
 		srv.wg.Done()
 	}
 }
