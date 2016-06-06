@@ -168,7 +168,7 @@ func (srv *Server) handleSignals() {
 			srv.shutdown()
 		case syscall.SIGTERM:
 			log.Println(pid, "Received SIGTERM.")
-			srv.shutdown()
+			os.Exit(0)
 		default:
 			log.Printf("Received %v: nothing i care about...\n", sig)
 		}
@@ -218,8 +218,8 @@ func (srv *Server) serverTimeout(d time.Duration) {
 		if srv.state == StateTerminate {
 			break
 		}
-		fmt.Println("----time--out----")
 		srv.wg.Done()
+		time.Sleep(10*time.Millisecond)
 	}
 }
 

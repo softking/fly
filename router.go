@@ -240,6 +240,7 @@ func (r *Router) handleHTTPRequest(writer http.ResponseWriter, request *http.Req
 	c := &Context{}
 	c.Request = request
 	c.Writer = writer
+	c.Data = make(map[string]interface{})
 	c.Params = make(map[string]string)
 	for _,p:=range params{
 		c.Params[p.Key] = p.Value

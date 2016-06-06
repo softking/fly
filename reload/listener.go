@@ -36,7 +36,7 @@ func (gl *flyListener) Accept() (c net.Conn, err error) {
 	}
 
 	tc.SetKeepAlive(true)
-	tc.SetKeepAlivePeriod(3 * time.Minute)
+	tc.SetKeepAlivePeriod(30 * time.Second)
 
 	c = &flyConn{
 		Conn:   tc,
