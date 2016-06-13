@@ -61,7 +61,7 @@ func (srv *Server) ListenAndServe() (err error) {
 			log.Println(err)
 			return err
 		}
-		err = process.Signal(syscall.SIGTERM)
+		err = process.Signal(syscall.SIGINT)
 		if err != nil {
 			return err
 		}
@@ -109,7 +109,7 @@ func (srv *Server) ListenAndServeTLS(certFile, keyFile string) (err error) {
 			log.Println(err)
 			return err
 		}
-		err = process.Signal(syscall.SIGTERM)
+		err = process.Signal(syscall.SIGINT)
 		if err != nil {
 			return err
 		}
@@ -214,13 +214,15 @@ func (srv *Server) serverTimeout(d time.Duration) {
 	}
 	time.Sleep(d)
 	log.Println("[STOP - Hammer Time] Forcefully shutting down parent")
-	for {
-		if srv.state == StateTerminate {
-			break
-		}
-		srv.wg.Done()
-		time.Sleep(10*time.Millisecond)
-	}
+	os.Exit(0)
+	//for {
+	//	if srv.state == StateTerminate {
+	//		break
+	//	}
+	//	fmt.Println("time out")
+	//	srv.wg.Done()
+	//	time.Sleep(10*time.Millisecond)
+	//}
 }
 
 func (srv *Server) fork() (err error) {

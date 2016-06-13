@@ -24,6 +24,11 @@ func (c *flyConn) Close() (err error) {
 			}
 		}
 	}()
+	err = c.Conn.Close()
+	if err!= nil{
+		return
+	}
+
 	c.server.wg.Done()
-	return c.Conn.Close()
+	return
 }

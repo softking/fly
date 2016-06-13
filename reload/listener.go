@@ -5,6 +5,7 @@ import (
 	"os"
 	"syscall"
 	"time"
+	"fmt"
 )
 
 type flyListener struct {
@@ -35,8 +36,14 @@ func (gl *flyListener) Accept() (c net.Conn, err error) {
 		return
 	}
 
-	tc.SetKeepAlive(true)
-	tc.SetKeepAlivePeriod(30 * time.Second)
+	err = tc.SetKeepAlive(true)
+	if err != nil{
+		return
+	}
+	err = tc.SetKeepAlivePeriod(30 * time.Second)
+	if err != nil{
+		return
+	}
 
 	c = &flyConn{
 		Conn:   tc,
