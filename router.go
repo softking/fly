@@ -22,6 +22,9 @@ type Router struct {
 	RedirectFixedPath bool
 	HandleMethodNotAllowed bool
 	HandleOPTIONS bool
+	NotFoundUseMidWare bool
+	MethodNotAllowedUseMidware bool
+
 	NotFound  Handler
 	MethodNotAllowed Handler
 	PanicHandler func(http.ResponseWriter, *http.Request, interface{})
@@ -220,7 +223,9 @@ func (r *Router) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 					c.Writer = w
 					c.Data = make(map[string]interface{})
 					c.handlers = []Handler{}
-					c.handlers = append(c.handlers, r.Mid...)
+					if r.MethodNotAllowedUseMidware {
+						c.handlers = append(c.handlers, r.Mid...)
+					}
 					c.handlers = append(c.handlers, r.MethodNotAllowed)
 					c.dispatch()
 				} else {
@@ -241,7 +246,9 @@ func (r *Router) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 		c.Writer = w
 		c.Data = make(map[string]interface{})
 		c.handlers = []Handler{}
-		c.handlers = append(c.handlers, r.Mid...)
+		if r.NotFoundUseMidWare{
+			c.handlers = append(c.handlers, r.Mid...)
+		}
 		c.handlers = append(c.handlers, r.NotFound)
 		c.dispatch()
 	} else {
