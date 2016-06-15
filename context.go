@@ -80,6 +80,16 @@ func  (c *Context)Get(key string)(interface{}, bool){
 	return data,has
 }
 
+// SetCode http code
+func (c *Context) SetCode(code int) {
+	if !c.setState{
+		c.state = code
+		c.Writer.WriteHeader(code)
+		c.setState = true
+	}
+}
+
+
 // WriteString 输出字符串
 func (c *Context) WriteString(code int, context string) {
 	if !c.setState{

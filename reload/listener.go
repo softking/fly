@@ -5,7 +5,6 @@ import (
 	"os"
 	"syscall"
 	"time"
-	"fmt"
 )
 
 type flyListener struct {

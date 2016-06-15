@@ -22,8 +22,8 @@ type Router struct {
 	RedirectFixedPath bool
 	HandleMethodNotAllowed bool
 	HandleOPTIONS bool
-	NotFound http.Handler
-	MethodNotAllowed http.Handler
+	NotFound  Handler
+	MethodNotAllowed Handler
 	PanicHandler func(http.ResponseWriter, *http.Request, interface{})
 	Mid []Handler
 }
@@ -215,7 +215,14 @@ func (r *Router) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 			if allow := r.allowed(path, req.Method); len(allow) > 0 {
 				w.Header().Set("Allow", allow)
 				if r.MethodNotAllowed != nil {
-					r.MethodNotAllowed.ServeHTTP(w, req)
+					c := &Context{}
+					c.Request = req
+					c.Writer = w
+					c.Data = make(map[string]interface{})
+					c.handlers = []Handler{}
+					c.handlers = append(c.handlers, r.Mid...)
+					c.handlers = append(c.handlers, r.MethodNotAllowed)
+					c.dispatch()
 				} else {
 					http.Error(w,
 						http.StatusText(http.StatusMethodNotAllowed),
@@ -229,7 +236,14 @@ func (r *Router) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 
 	// Handle 404
 	if r.NotFound != nil {
-		r.NotFound.ServeHTTP(w, req)
+		c := &Context{}
+		c.Request = req
+		c.Writer = w
+		c.Data = make(map[string]interface{})
+		c.handlers = []Handler{}
+		c.handlers = append(c.handlers, r.Mid...)
+		c.handlers = append(c.handlers, r.NotFound)
+		c.dispatch()
 	} else {
 		http.NotFound(w, req)
 	}
