@@ -5,9 +5,9 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/softking/fly"
-	"compress/gzip"
 	"bytes"
+	"compress/gzip"
+	"github.com/softking/fly"
 )
 
 //Gzip returns a middleware which returns the gzip of response data instead of normal response

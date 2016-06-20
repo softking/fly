@@ -1,10 +1,10 @@
 package fly
 
 import (
-	"net/http"
-	"strings"
 	"net"
+	"net/http"
 	"net/url"
+	"strings"
 )
 
 // Handler Handler
@@ -13,24 +13,24 @@ type Handler func(*Context)
 // Context Context
 type Context struct {
 	setState bool
-	state int
+	state    int
 	index    int
 	Writer   http.ResponseWriter
 	Request  *http.Request
-	Params  map[string]string
+	Params   map[string]string
 	Data     map[string]interface{}
 	handlers []Handler
 }
 
 // SetCookie SetCookie
 func (c *Context) SetCookie(
-name string,
-value string,
-maxAge int,
-path string,
-domain string,
-secure bool,
-httpOnly bool,
+	name string,
+	value string,
+	maxAge int,
+	path string,
+	domain string,
+	secure bool,
+	httpOnly bool,
 ) {
 	if path == "" {
 		path = "/"
@@ -46,8 +46,15 @@ httpOnly bool,
 	})
 }
 
+// NewContext NewContext
+func NewContext(state int) *Context {
+	return &Context{
+		state: state,
+	}
+}
+
 // Redirect Redirect
-func (c *Context)Redirect(code int,location string){
+func (c *Context) Redirect(code int, location string) {
 	http.Redirect(c.Writer, c.Request, location, code)
 }
 
@@ -70,29 +77,28 @@ func (c *Context) Cookie(name string) (string, error) {
 }
 
 // Put Put
-func (c *Context)Put(key string, value interface{}){
+func (c *Context) Put(key string, value interface{}) {
 	c.Data[key] = value
 }
 
 // Get Get
-func  (c *Context)Get(key string)(interface{}, bool){
+func (c *Context) Get(key string) (interface{}, bool) {
 	data, has := c.Data[key]
-	return data,has
+	return data, has
 }
 
 // SetCode http code
 func (c *Context) SetCode(code int) {
-	if !c.setState{
+	if !c.setState {
 		c.state = code
 		c.Writer.WriteHeader(code)
 		c.setState = true
 	}
 }
 
-
 // WriteString 输出字符串
 func (c *Context) WriteString(code int, context string) {
-	if !c.setState{
+	if !c.setState {
 		c.state = code
 		c.Writer.WriteHeader(code)
 		c.setState = true
@@ -103,7 +109,7 @@ func (c *Context) WriteString(code int, context string) {
 
 // Write 输出
 func (c *Context) Write(code int, context []byte) {
-	if !c.setState{
+	if !c.setState {
 		c.state = code
 		c.Writer.WriteHeader(code)
 		c.setState = true
@@ -113,11 +119,11 @@ func (c *Context) Write(code int, context []byte) {
 }
 
 // State 获取State
-func (c *Context)State()int{
+func (c *Context) State() int {
 	return c.state
 }
 
-func (c *Context)Param(key string)(string){
+func (c *Context) Param(key string) string {
 	return c.Params[key]
 }
 
@@ -155,6 +161,6 @@ func (c *Context) Next() {
 }
 
 // Abort 中断中间件
-func (c *Context)Abort(){
+func (c *Context) Abort() {
 	c.index = len(c.handlers)
 }

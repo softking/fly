@@ -1,8 +1,8 @@
 package fly
 
 import (
-	"net/http"
 	"github.com/softking/fly/reload"
+	"net/http"
 )
 
 // Server ServeHttp
@@ -11,7 +11,7 @@ type Server interface {
 }
 
 // Run 正常run
-func Run(mod Server,addr ...string) error {
+func Run(mod Server, addr ...string) error {
 	address := resolveAddress(addr)
 	err := http.ListenAndServe(address, mod)
 	return err

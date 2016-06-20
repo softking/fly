@@ -25,7 +25,7 @@ func (c *flyConn) Close() (err error) {
 		}
 	}()
 	err = c.Conn.Close()
-	if err!= nil{
+	if err != nil {
 		return
 	}
 

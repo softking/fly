@@ -15,7 +15,7 @@ func HelloPre(c *fly.Context) {
 func Hello(c *fly.Context) {
 	a, _ := c.Query("cao")
 	c.WriteString(200, "hello   ")
-	c.WriteString(200, a + "   ")
+	c.WriteString(200, a+"   ")
 	c.WriteString(200, c.Param("name")+"\n")
 }
 

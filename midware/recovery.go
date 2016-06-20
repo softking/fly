@@ -7,13 +7,13 @@ package midware
 import (
 	"bytes"
 	"fmt"
+	"github.com/softking/fly"
 	"io"
 	"io/ioutil"
 	"log"
 	"net/http/httputil"
-	"runtime"
 	"os"
-	"github.com/softking/fly"
+	"runtime"
 )
 
 // DefaultErrorWriter 默认的输出
@@ -35,7 +35,7 @@ func Recovery(c *fly.Context) {
 				httprequest, _ := httputil.DumpRequest(c.Request, false)
 				logger.Printf("[Recovery] panic recovered:\n%s\n%s\n%s", string(httprequest), err, stack)
 			}
-			c.WriteString(500,"")
+			c.WriteString(500, "")
 		}
 	}()
 	c.Next()

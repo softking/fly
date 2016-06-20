@@ -1,10 +1,8 @@
-
 package fly
 
 import (
 	"net/http"
 )
-
 
 // Param node
 type Param struct {
@@ -17,20 +15,19 @@ type Params []Param
 
 // Router struct
 type Router struct {
-	trees map[string]*node
-	RedirectTrailingSlash bool
-	RedirectFixedPath bool
-	HandleMethodNotAllowed bool
-	HandleOPTIONS bool
-	NotFoundUseMidWare bool
+	trees                      map[string]*node
+	RedirectTrailingSlash      bool
+	RedirectFixedPath          bool
+	HandleMethodNotAllowed     bool
+	HandleOPTIONS              bool
+	NotFoundUseMidWare         bool
 	MethodNotAllowedUseMidware bool
 
-	NotFound  Handler
+	NotFound         Handler
 	MethodNotAllowed Handler
-	PanicHandler func(http.ResponseWriter, *http.Request, interface{})
-	Mid []Handler
+	PanicHandler     func(http.ResponseWriter, *http.Request, interface{})
+	Mid              []Handler
 }
-
 
 // IWillFly 飞翔吧,骚年
 func IWillFly() *Router {
@@ -51,7 +48,6 @@ func (r *Router) MidWare(handler ...Handler) {
 func (r *Router) AddMidware(handler ...Handler) {
 	r.Mid = append(r.Mid, handler...)
 }
-
 
 // GET is a shortcut for router.Handle("GET", path, handle)
 func (r *Router) GET(path string, handle ...Handler) {
@@ -169,7 +165,7 @@ func (r *Router) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 
 	if root := r.trees[req.Method]; root != nil {
 		if handle, ps, tsr := root.getValue(path); handle != nil {
-			r.handleHTTPRequest(w,req,ps, handle)
+			r.handleHTTPRequest(w, req, ps, handle)
 			return
 		} else if req.Method != "CONNECT" && path != "/" {
 			code := 301 // Permanent redirect, request with GET method
@@ -218,10 +214,11 @@ func (r *Router) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 			if allow := r.allowed(path, req.Method); len(allow) > 0 {
 				w.Header().Set("Allow", allow)
 				if r.MethodNotAllowed != nil {
-					c := &Context{}
+					c := NewContext(405)
 					c.Request = req
 					c.Writer = w
 					c.Data = make(map[string]interface{})
+					c.Request.ParseForm()
 					c.handlers = []Handler{}
 					if r.MethodNotAllowedUseMidware {
 						c.handlers = append(c.handlers, r.Mid...)
@@ -241,12 +238,13 @@ func (r *Router) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 
 	// Handle 404
 	if r.NotFound != nil {
-		c := &Context{}
+		c := NewContext(404)
 		c.Request = req
 		c.Writer = w
 		c.Data = make(map[string]interface{})
+		c.Request.ParseForm()
 		c.handlers = []Handler{}
-		if r.NotFoundUseMidWare{
+		if r.NotFoundUseMidWare {
 			c.handlers = append(c.handlers, r.Mid...)
 		}
 		c.handlers = append(c.handlers, r.NotFound)
@@ -258,12 +256,12 @@ func (r *Router) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 
 func (r *Router) handleHTTPRequest(writer http.ResponseWriter, request *http.Request, params Params, handle []Handler) {
 
-	c := &Context{}
+	c := NewContext(200)
 	c.Request = request
 	c.Writer = writer
 	c.Data = make(map[string]interface{})
 	c.Params = make(map[string]string)
-	for _,p:=range params{
+	for _, p := range params {
 		c.Params[p.Key] = p.Value
 	}
 

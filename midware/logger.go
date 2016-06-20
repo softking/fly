@@ -9,8 +9,8 @@ import (
 	"io"
 	"time"
 
-	"os"
 	"github.com/softking/fly"
+	"os"
 )
 
 // DefaultWriter 默认的输出
@@ -42,4 +42,3 @@ func Logger(c *fly.Context) {
 	)
 
 }
-

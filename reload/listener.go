@@ -36,11 +36,11 @@ func (gl *flyListener) Accept() (c net.Conn, err error) {
 	}
 
 	err = tc.SetKeepAlive(true)
-	if err != nil{
+	if err != nil {
 		return
 	}
 	err = tc.SetKeepAlivePeriod(30 * time.Second)
-	if err != nil{
+	if err != nil {
 		return
 	}
 
