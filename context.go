@@ -5,6 +5,8 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
+	"encoding/json"
+	"log"
 )
 
 // Handler Handler
@@ -105,6 +107,21 @@ func (c *Context) WriteString(code int, context string) {
 	}
 
 	c.Writer.Write([]byte(context))
+}
+
+// WriteJSON 输出JSON
+func (c *Context) WriteJSON(code int, context interface{}) {
+	if !c.setState {
+		c.state = code
+		c.Writer.WriteHeader(code)
+		c.setState = true
+	}
+
+	data, err := json.Marshal(context)
+	if err != nil{
+		log.Fatal("json error")
+	}
+	c.Writer.Write(data)
 }
 
 // Write 输出

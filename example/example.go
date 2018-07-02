@@ -5,6 +5,12 @@ import (
 	"github.com/softking/fly/midware"
 )
 
+
+type name struct{
+	Name string
+	ID int
+}
+
 // HelloPre pre
 func HelloPre(c *fly.Context) {
 	c.WriteString(200, "pre \n")
@@ -31,6 +37,11 @@ func Mid(c *fly.Context) {
 	c.WriteString(200, "midafter\n")
 }
 
+
+func Json(c *fly.Context){
+	c.WriteJSON(200, name{Name:"lei", ID:123})
+}
+
 func main() {
 	router := fly.IWillFly()
 
@@ -38,6 +49,8 @@ func main() {
 	router.AddMidware(Mid)
 
 	router.GET("/hello/:name", HelloPre, Hello, HelloAfter)
+
+	router.GET("/json", Json)
 
 	fly.ReloadRun(router, ":8888")
 
